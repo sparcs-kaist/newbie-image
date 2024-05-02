@@ -2,6 +2,7 @@ version: '3'
 
 services:
   app:
+    name: ||user||-app
     image: ghcr.io/sparcs-kaist/newbie-image:latest
     restart: always
     ports:
@@ -14,8 +15,12 @@ services:
       - NEW_PASSWORD=||NEW_PASSWORD||
     depends_on:
       - db
+    networks:
+      - default
+      - proxy
 
   db:
+    name: ||user||-db
     image: mysql:8.4.0
     restart: always
     volumes:
@@ -26,3 +31,10 @@ services:
 
 volumes:
   data:
+
+networks:
+  - proxy
+
+networks:
+  proxy:
+    external: true

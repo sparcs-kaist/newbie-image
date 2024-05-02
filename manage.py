@@ -81,6 +81,7 @@ def create():
         upass = ''.join(random.choices(string.ascii_letters + string.digits, k=PASSLENGTH))
         uc = deploy.replace("||NEW_PASSWORD||", upass)
         uc = uc.replace("||MYSQL_ROOT_PASSWORD||", MYSQLPASSWD)
+        uc = uc.replace("||USER||", user)
         port1, port2, port3 = create_three_ports()
         uc = uc.replace("||PORT22||", str(port1))
         uc = uc.replace("||PORT3000||", str(port2))
