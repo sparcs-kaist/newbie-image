@@ -13,7 +13,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
     openssh-server \
     sudo
 
-RUN useradd -m -s /bin/bash sparcs && \
+RUN userdel -r ubuntu && \
+    useradd -m -s /bin/bash sparcs && \
     chown -R sparcs:sparcs /home/sparcs && \
     adduser sparcs sudo && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
