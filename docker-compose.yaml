@@ -9,8 +9,8 @@ services:
       - "15000:22"
       - "15001:3000"
       - "15002:8000"
-    volumes:
-      - "./home:/home/sparcs"
+    #volumes:
+    #  - "./home:/home/sparcs"
     environment:
       - NEW_PASSWORD=1234
     depends_on:
