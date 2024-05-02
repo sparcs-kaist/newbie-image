@@ -36,7 +36,7 @@ def stop():
         if not ucPath.exists():
             raise FileNotFoundError(f"docker compose.yml not found for {user}")
         
-        os.system(f"cd {user} && docker-compose down")
+        os.system(f"cd {str(ucPath.parent)} && docker-compose down")
 
 def start():
     for user in USERS:
@@ -44,7 +44,7 @@ def start():
         if not ucPath.exists():
             raise FileNotFoundError(f"docker-compose.yml not found for {user}")
         
-        os.system(f"cd {user} && docker compose up -d --build")
+        os.system(f"cd {str(ucPath.parent)} && docker compose up -d --build")
 
 def getpass():
     for user in USERS:
