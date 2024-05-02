@@ -5,9 +5,9 @@ services:
     image: ghcr.io/sparcs-kaist/newbie-image:latest
     restart: always
     ports:
-      - "15000:22"
-      - "15001:3000"
-      - "15002:8000"
+      - "||PORT22||:22"
+      - "||PORT3000||:3000"
+      - "||PORT8000||:8000"
     volumes:
       - "./home:/home/sparcs"
     environment:
