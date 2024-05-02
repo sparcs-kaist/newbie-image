@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    name: ||user||-app
+    name: ||USER||-app
     image: ghcr.io/sparcs-kaist/newbie-image:latest
     restart: always
     ports:
@@ -20,7 +20,7 @@ services:
       - proxy
 
   db:
-    name: ||user||-db
+    name: ||USER||-db
     image: mysql:8.4.0
     restart: always
     volumes:
