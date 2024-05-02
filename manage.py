@@ -3,11 +3,23 @@ from urllib.request import urlopen
 import string
 import random
 import os
+import sys
 
 from settings import USERS, PASSLENGTH, MYSQLPASSWD, DOCKERPATH
 
+# check python version 3.6+
+if sys.version_info < (3, 6):
+    print("Python 3.6+ is required")
+    sys.exit(1)
+
+
 DOCKERPATH = Path(DOCKERPATH)
 users = []
+
+if os.system("docker-compose --version") == 0:
+    dcommand = "docker-compose"
+elif os.system("docker compose --version") == 0:
+    dcommand = "docker compose"
 
 def create():
     DOCKERPATH.mkdir(exist_ok=True)
@@ -36,7 +48,7 @@ def stop():
         if not ucPath.exists():
             raise FileNotFoundError(f"docker compose.yml not found for {user}")
         
-        os.system(f"cd {str(ucPath.parent)} && docker-compose down")
+        os.system(f"cd {str(ucPath.parent)} && {dcommand} down")
 
 def start():
     for user in USERS:
@@ -44,7 +56,7 @@ def start():
         if not ucPath.exists():
             raise FileNotFoundError(f"docker-compose.yml not found for {user}")
         
-        os.system(f"cd {str(ucPath.parent)} && docker compose up -d --build")
+        os.system(f"cd {str(ucPath.parent)} && {dcommand} up -d --build")
 
 def getpass():
     for user in USERS:
