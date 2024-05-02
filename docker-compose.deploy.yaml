@@ -28,6 +28,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=||MYSQL_ROOT_PASSWORD||
       - MYSQL_DATABASE=db
+    networks:
+      - default
 
 volumes:
   data:
@@ -36,5 +38,6 @@ networks:
   - proxy
 
 networks:
+  default:
   proxy:
     external: true
