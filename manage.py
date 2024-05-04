@@ -63,7 +63,7 @@ def create_three_ports():
             return port1, port2, port3
     
 
-def create():
+def create(manual_user: str = None):
     DOCKERPATH.mkdir(exist_ok=True)
     deployComposePath = Path("docker-compose.deploy.yaml")
 
@@ -72,42 +72,48 @@ def create():
     else:
         url = urlopen("https://raw.githubusercontent.com/sparcs-kaist/newbie-image/main/docker-compose.deploy.yaml")
         deploy = url.read().decode()
+        deployComposePath.write_text(deploy)
 
-    for user in USERS:
-        userPath = DOCKERPATH / user
-        userPath.mkdir(exist_ok=True)
-        userComposePath = userPath / "docker-compose.yaml"
-        
-        upass = ''.join(random.choices(string.ascii_letters + string.digits, k=PASSLENGTH))
-        uc = deploy.replace("||NEW_PASSWORD||", upass)
-        uc = uc.replace("||MYSQL_ROOT_PASSWORD||", MYSQLPASSWD)
-        uc = uc.replace("||USER||", user)
-        port1, port2, port3 = create_three_ports()
-        uc = uc.replace("||PORT22||", str(port1))
-        uc = uc.replace("||PORT3000||", str(port2))
-        uc = uc.replace("||PORT8000||", str(port3))
-        userComposePath.write_text(uc)
-        users.append(userPath)
+    if manual_user:
+        _add(manual_user)
+    else:
+        for user in USERS:
+            _add(user)
+
+def _add(name: str):
+    userPath = DOCKERPATH / name
+    userPath.mkdir(exist_ok=True)
+    userComposePath = userPath / "docker-compose.yaml"
+    upass = ''.join(random.choices(string.ascii_letters + string.digits, k=PASSLENGTH))
+    uc = Path("docker-compose.deploy.yaml").read_text()
+    uc = uc.replace("||NEW_PASSWORD||", upass)
+    uc = uc.replace("||MYSQL_ROOT_PASSWORD||", MYSQLPASSWD)
+    uc = uc.replace("||USER||", name)
+    port1, port2, port3 = create_three_ports()
+    uc = uc.replace("||PORT22||", str(port1))
+    uc = uc.replace("||PORT3000||", str(port2))
+    uc = uc.replace("||PORT8000||", str(port3))
+    userComposePath.write_text(uc)
 
 def stop():
-    for user in USERS:
-        ucPath = DOCKERPATH / user / "docker-compose.yaml"
+    for user in Path(DOCKERPATH).iterdir():
+        ucPath = user / "docker-compose.yaml"
         if not ucPath.exists():
             raise FileNotFoundError(f"docker compose.yml not found for {user}")
         
         os.system(f"cd {str(ucPath.parent)} && {dcommand} down")
 
 def start():
-    for user in USERS:
-        ucPath = DOCKERPATH / user / "docker-compose.yaml"
+    for user in Path(DOCKERPATH).iterdir():
+        ucPath = user / "docker-compose.yaml"
         if not ucPath.exists():
             raise FileNotFoundError(f"docker-compose.yml not found for {user}")
         
         os.system(f"cd {str(ucPath.parent)} && {dcommand} up -d --build")
 
 def getpass():
-    for user in USERS:
-        ucPath = DOCKERPATH / user / "docker-compose.yaml"
+    for user in Path(DOCKERPATH).iterdir():
+        ucPath = user / "docker-compose.yaml"
         if not ucPath.exists():
             raise FileNotFoundError(f"docker compose.yml not found for {user}")
         passwd = ucPath.read_text().split("NEW_PASSWORD=")[1].split("\n")[0]
@@ -116,6 +122,24 @@ def getpass():
         port2 = portstr[1].split(":")[0]
         port3 = portstr[2].split(":")[0]
         print(PRINTINFO.format(user=user, passwd=passwd, port22=port1, port3000=port2, port8000=port3))
+
+def create_menu():
+    while True:
+        print("1. Create based on settings.py")
+        print("2. Create manually")
+        print("3. Back")
+
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            create()
+        elif choice == "2":
+            name = input("Enter the name of the user: ")
+            create(name)
+        elif choice == "3":
+            break
+        else:
+            print("Invalid choice")
+
 
 def main():
     while True:
@@ -126,7 +150,7 @@ def main():
         print("5. Exit")
         choice = input("Enter your choice: ")
         if choice == "1":
-            create()
+            create_menu()
         elif choice == "2":
             start()
         elif choice == "3":

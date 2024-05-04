@@ -35,9 +35,6 @@ volumes:
   data:
 
 networks:
-  - proxy
-
-networks:
   default:
   proxy:
     external: true
