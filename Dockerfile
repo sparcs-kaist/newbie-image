@@ -11,7 +11,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
     wget \
     unzip \
     openssh-server \
-    sudo
+    sudo \
+    mysql-client
 
 RUN userdel -r ubuntu && \
     useradd -m -s /bin/bash sparcs && \
