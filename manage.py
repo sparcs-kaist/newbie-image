@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from urllib.request import urlopen
 from subprocess import Popen, PIPE
 from pathlib import Path
