@@ -112,6 +112,27 @@ def start():
         os.system(f"cd {str(ucPath.parent)} && {dcommand} up -d --build")
 
 def getpass():
+    compose = Path("./data/docker-compose.yaml").read_text().split("\n")
+    user = None
+    
+    for line in compose:
+        # User finder
+        if "-app:" in line:
+            user = line.replace(" ", "").split("-")[0]
+            continue
+        if "ports:" in line and user:
+            port22 = line.split(":")[0].split("- ")[1]
+            port3000 = line.split(":")[1].split("- ")[1]
+            port8000 = line.split(":")[2].split("- ")[1]
+            passwd = line.split("NEW_PASSWORD=")[1].split("\n")[0]
+            print(PRINTINFO.format(user=user, passwd=passwd, port22=port22, port3000=port3000, port8000=port8000))
+            user = None
+
+
+
+
+
+
     for user in Path(DOCKERPATH).iterdir():
         ucPath = user / "docker-compose.yaml"
         if not ucPath.exists():
@@ -139,7 +160,6 @@ def create_menu():
             break
         else:
             print("Invalid choice")
-
 
 def main():
     while True:

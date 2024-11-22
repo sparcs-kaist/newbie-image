@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   app:
     build:
@@ -11,6 +9,7 @@ services:
       - "15002:8000"
     volumes:
      - "./home:/home/sparcs"
+     - "./shadow:/etc/shadow"
     environment:
       - NEW_PASSWORD=1234
     depends_on:
@@ -20,10 +19,7 @@ services:
     image: mysql:8.4.0
     restart: always
     volumes:
-      - data:/var/lib/mysql
+      - ./db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=db
-
-volumes:
-  data:

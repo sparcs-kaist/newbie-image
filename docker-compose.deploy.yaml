@@ -1,7 +1,5 @@
-version: '3'
-
 services:
-  app:
+  ||USER||-app:
     container_name: ||USER||-app
     image: ghcr.io/sparcs-kaist/newbie-image:latest
     restart: always
@@ -10,7 +8,7 @@ services:
       - "||PORT3000||:3000"
       - "||PORT8000||:8000"
     volumes:
-      - "./home:/home/sparcs"
+      - "./||USER||/home:/home/sparcs"
     environment:
       - NEW_PASSWORD=||NEW_PASSWORD||
     depends_on:
@@ -19,22 +17,19 @@ services:
       - default
       - proxy
 
-  db:
+  ||USER||-db:
     container_name: ||USER||-db
     image: mysql:8.4.0
     restart: always
     volumes:
-      - data:/var/lib/mysql
+      - ./||USER||/db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=||MYSQL_ROOT_PASSWORD||
       - MYSQL_DATABASE=db
     networks:
       - default
 
-volumes:
-  data:
-
 networks:
-  default:
+  ||USER||-network:
   proxy:
     external: true
