@@ -145,6 +145,7 @@ def backup():
     COMMAND="""docker exec -it {user}-app su - sparcs -c "mysqldump -u root --password=tnfqkrtm -h db --all-databases > ~/backup.sql" """
 
     for user in Path(DOCKERPATH).iterdir():
+        user = user.name
         print(f"Woring for {user} backup...")
         os.system(COMMAND.format(user=user))
     
