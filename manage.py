@@ -140,6 +140,14 @@ def create_menu():
         else:
             print("Invalid choice")
 
+def backup():
+    COMMAND="""docker exec -it {user}-app su - sparcs -c "mysqldump -u root --password=tnfqkrtm -h db --all-databases > ~/backup.sql" """
+
+    for user in Path(DOCKERPATH).iterdir():
+        print(f"Woring for {user} backup...")
+        os.system(COMMAND.format(user=user))
+    
+    print("Backup done")
 
 def main():
     while True:
@@ -147,7 +155,8 @@ def main():
         print("2. Start docker-compose")
         print("3. Stop docker-compose")
         print("4. Get passwords")
-        print("5. Exit")
+        print("5. Backup")
+        print("6. Exit")
         choice = input("Enter your choice: ")
         if choice == "1":
             create_menu()
@@ -158,6 +167,8 @@ def main():
         elif choice == "4":
             getpass()
         elif choice == "5":
+            backup()
+        elif choice == "6":
             break
         else:
             print("Invalid choice")
