@@ -10,13 +10,12 @@ import os
 
 from settings import *
 
-# check python version 3.6+
-if sys.version_info < (3, 6):
+# check python version 3.9+
+if sys.version_info < (3, 9):
     print("Python 3.6+ is required")
     sys.exit(1)
 
 reserv_port = []
-users = []
 
 #if os.system("docker-compose --version") == 0:   dcommand = "docker-compose"
 #elif os.system("docker compose --version") == 0: dcommand = "docker compose"
@@ -34,9 +33,10 @@ def nginx():
     
     # web: {username}.newbie.sparcs.me
     # api: {username}.api.newbie.sparcs.me
-    for user in users:
-        apiConf = NGINXCONF.format(domain=f"{user}.api.newbie.sparcs.me", port=user["port8000"])
-        webConf = NGINXCONF.format(domain=f"{user}.newbie.sparcs.me", port=user["port3000"])
+    users = load_info()
+    for user, key in users.items():
+        apiConf = NGINXCONF.format(domain=f"{user}.api.newbie.sparcs.me", port=key["port8000"])
+        webConf = NGINXCONF.format(domain=f"{user}.newbie.sparcs.me", port=key["port3000"])
         apiConfPath = Path(NGINXPATH) / f"{user}.api.newbie.sparcs.me.conf"
         webConfPath = Path(NGINXPATH) / f"{user}.newbie.sparcs.me.conf"
         apiConfPath.write_text(apiConf)
@@ -130,7 +130,7 @@ def start():
         
         os.system(f"cd {str(ucPath.parent)} && {dcommand} up -d --build")
 
-def load_info() -> dict:
+def load_info() -> dict[str, dict[str, str]]:
     """
     Load the user information from the docker-compose.yaml file.
 
@@ -148,7 +148,6 @@ def load_info() -> dict:
         ...
     }
     """
-
     user_info = {}
     for user in Path(DOCKERPATH).iterdir():
         ucPath = user / "docker-compose.yaml"
